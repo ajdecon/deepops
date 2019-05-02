@@ -17,6 +17,7 @@ deepops_centos_slurm_url: "https://github.com/DeepOps/slurm/releases/download/do
 
 # Flags for downloading content
 download_yum_repos: yes
+download_createrepo_rpms: yes
 download_docker_images: yes
 download_helm_repos: yes
 download_deepops_repo: yes
@@ -31,6 +32,14 @@ upload_helm_chats: yes
 build_pip_mirror: yes
 build_misc_mirror: yes
 
+# Configure RPM locations for createrepo dependencies
+createrepo_dep_url_list:
+  - name: "createrepo.rpm"
+    url: "https://rpmfind.net/linux/centos/7.6.1810/os/x86_64/Packages/createrepo-0.9.9-28.el7.noarch.rpm"
+  - name: "deltarpm.rpm"
+    url: "https://www.rpmfind.net/linux/centos/7.6.1810/os/x86_64/Packages/deltarpm-3.6-3.el7.x86_64.rpm"
+  - name: "python-deltarpm.rpm"
+    url: "https://rpmfind.net/linux/centos/7.6.1810/os/x86_64/Packages/python-deltarpm-3.6-3.el7.x86_64.rpm"
 
 # Configure download of yum repos
 centos_iso_mirror: "http://mirrors.ocf.berkeley.edu/centos/7.6.1810/isos/x86_64"

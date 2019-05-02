@@ -57,6 +57,13 @@
     url: "{{ nvidia_docker_wrapper_url }}"
     dest: "{{ offline_cache_dir }}/misc-files/nvidia-docker"
 
+- name: download createrepo rpm files
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ offline_cache_dir }}/misc-files/{{ item.name }}"
+  with_items: "{{ createrepo_dep_url_list }}"
+  when: download_createrepo_rpms
+
 - name: archive docker images
   docker_image:
     name: "{{ item.repo }}{{ item.image }}"
