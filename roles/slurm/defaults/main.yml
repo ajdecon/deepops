@@ -92,3 +92,8 @@ pmix_src_url: "https://github.com/openpmix/openpmix/releases/download/v{{ pmix_v
 pmix_install_prefix: /opt/deepops/pmix
 pmix_configure: "./configure --prefix={{ pmix_install_prefix }} --with-hwloc={{ hwloc_install_prefix }}"
 pmix_force_rebuild: no
+
+slurm_enable_nvml_autodetect: yes
+
+slurm_enable_mps: yes
+slurm_mps_per_gpu: 100
