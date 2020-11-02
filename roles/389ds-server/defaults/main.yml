@@ -1,0 +1,8 @@
+---
+ds_suffix: "dc=deepops,dc=example,dc=com"
+ds_root_password: "deepops"
+ds_include_sample_entries: yes
+
+# Instance configuration file
+ds_instance_inf_src: "instance.inf"
+ds_instance_inf_dest: "/root/instance.inf"

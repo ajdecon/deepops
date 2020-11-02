@@ -1,0 +1,20 @@
+---
+- name: install packages for 389ds server
+  apt:
+    name:
+      - "389-ds"
+      - "389-admin"
+      - "389-admin-console"
+      - "python3-lib389"
+    state: "present"
+
+- name: generate instance setup file
+  template:
+    src: "{{ ds_instance_inf_src }}"
+    dest: "{{ ds_instance_inf_dest }}"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: create DS instance
+  command: dscreate fromfile "{{ ds_instance_inf_dest }}"

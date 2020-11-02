@@ -1,0 +1,9 @@
+[general]
+config_version = 2
+
+[slapd]
+root_password = {{ ds_root_password }}
+
+[backend-userroot]
+sample_entries = {{ ds_include_sample_entries }}
+suffix = {{ ds_suffix }}
