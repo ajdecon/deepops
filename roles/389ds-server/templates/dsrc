@@ -1,0 +1,4 @@
+[{{ ds_server_id }}]
+uri = ldap://localhost
+basedn = {{ ds_suffix }}
+binddn = cn=Directory Manager

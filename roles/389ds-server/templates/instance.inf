@@ -1,9 +1,25 @@
-[general]
-config_version = 2
+[General]
+FullMachineName={{ ansible_nodename }}
+SuiteSpotUserID=dirsrv
+SuiteSpotGroup=dirsrv
+AdminDomain={{ ds_domain }}
+ConfigDirectoryAdminID=admin
+ConfigDirectoryAdminPwd={{ ds_root_password }}
+ConfigDirectoryLdapURL=ldap://dir.{{ ds_domain }}:{{ ds_port }}/o=NetscapeRoot
 
 [slapd]
-root_password = {{ ds_root_password }}
+SlapdConfigForMC=Yes 
+UseExistingMC=0
+ServerPort={{ ds_port }}
+ServerIdentifier={{ ds_server_id }}
+Suffix={{ ds_suffix }}
+RootDN=cn=Directory Manager
+RootDNPwd={{ ds_root_password }}
+ds_bename=exampleDB
+AddSampleEntries={{ ds_include_sample_entries }}
 
-[backend-userroot]
-sample_entries = {{ ds_include_sample_entries }}
-suffix = {{ ds_suffix }}
+[admin]
+Port={{ ds_admin_port }}
+ServerIpAddress=127.0.0.1
+ServerAdminID=admin
+ServerAdminPwd={{ ds_root_password }}

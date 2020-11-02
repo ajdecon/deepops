@@ -16,5 +16,19 @@
     group: root
     mode: 0600
 
-- name: create DS instance
-  command: dscreate fromfile "{{ ds_instance_inf_dest }}"
+- name: set up and configure 389ds
+  command: setup-ds-admin -s -f "{{ ds_instance_inf_dest }}"
+
+- name: create a systemctl symlink for lib389
+  file:
+    src: "/bin/systemctl"
+    dest: "/usr/bin/systemctl"
+    state: link
+
+- name: add a dsrc file for the root user
+  template:
+    src: "dsrc"
+    dest: "/root/.dsrc"
+    owner: "root"
+    group: "root"
+    mode: 0600

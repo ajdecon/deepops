@@ -1,7 +1,11 @@
 ---
+ds_domain: "deepops.example.com"
 ds_suffix: "dc=deepops,dc=example,dc=com"
 ds_root_password: "deepops"
-ds_include_sample_entries: yes
+ds_server_id: "deepops"
+ds_include_sample_entries: "Yes"
+ds_port: 389
+ds_admin_port: 9830
 
 # Instance configuration file
 ds_instance_inf_src: "instance.inf"
