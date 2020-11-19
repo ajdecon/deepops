@@ -1,6 +1,7 @@
 ---
 ansible_version: "2.9.5"
 
+download_apt_repos: true
 apt_mirror_port: 8005
 apt_repos_to_mirror:
 - "deb http://archive.ubuntu.com/ubuntu bionic main restricted"

@@ -11,6 +11,7 @@ deepops_mirror_host: "specify-ip-here"
 # in the offline-repo-mirrors Ansible role.
 
 deepops_docker_mirror: "{{ deepops_mirror_host }}:{{ docker_local_registry_port }}"
+deepops_apt_mirror: "http://{{ deepops_mirror_host }}:{{ apt_mirror_port }}"
 deepops_yum_mirror: "http://{{ deepops_mirror_host }}:{{ yum_mirror_port }}"
 deepops_charts_mirror: "http://{{ deepops_mirror_host }}:{{ helm_port }}"
 deepops_pypi_mirror: "http://{{ deepops_mirror_host }}:{{ pip_port }}"
