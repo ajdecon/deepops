@@ -3,6 +3,7 @@
   selinux:
     policy: "targeted"
     state: "permissive"
+  when: ansible_os_family == "RedHat"
 
 - name: ensure necessary packages are present
   package:
@@ -144,6 +145,35 @@
   when: build_yum_mirror
   tags:
   - yum_mirror
+
+- name: ensure apt destination path exists
+  file:
+    path: "{{ deepops_apt_dest_path }}"
+    owner: "{{ deepops_dest_owner }}"
+    group: "{{ deepops_dest_group }}"
+    mode: "0755"
+    state: "directory"
+  when: build_apt_mirror
+  tags:
+  - apt_mirror
+
+- name: copy apt content to destination path
+  command: rsync -a "{{ extract_path }}/apt/" "{{ deepops_apt_dest_path }}/"
+  when: build_apt_mirror
+  tags:
+  - apt_mirror
+
+- name: start nginx container to serve apt repo
+  docker_container:
+    name: "nginx-apt-repos"
+    image: "{{ docker_dest_registry }}/{{ nginx_image.image }}:{{ nginx_image.version }}"
+    volumes:
+    - "{{ deepops_apt_dest_path }}:/usr/share/nginx/html:ro"
+    ports:
+    - "{{ apt_mirror_port }}:80"
+    when: build_apt_mirror
+    tags:
+    - apt_mirror
 
 - name: sync helm charts to dest directory
   command: rsync -a "{{ helm_src_path }}/" "{{ helm_dest_path }}/"

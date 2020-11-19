@@ -30,21 +30,6 @@
   command: apt-mirror
   when: download_apt_repos
 
-- name: download Ubuntu ISO
-  get_url:
-    url: "{{ ubuntu_iso_mirror }}/{{ ubuntu_iso }}"
-    dest: "{{ offline_cache_dir }}/apt/{{ ubuntu_iso }}"
-    mode: 0644
-  when: download_apt_repos
-
-- name: copy gpg keys to cache dir
-  get_url:
-    url: "{{ item.url }}"
-    dest: "{{ offline_cache_dir }}/apt/gpgkeys/{{ item.name }}.pub"
-    mode: "0644"
-  with_items: "{{ apt_repo_gpg_keys }}"
-  when: download_apt_repos
-
 - name: clone fresh deepops repo
   git:
     repo: "https://github.com/NVIDIA/deepops"
@@ -122,4 +107,8 @@
   - "{{ hwloc_src_url }}"
   - "{{ pmix_src_url }}"
 
-
+- name: tar up the full result
+  archive:
+    path: "{{ offline_cache_dir }}"
+    dest: "{{ tar_file_path }}"
+  when: build_tar_file
