@@ -54,6 +54,28 @@
     version: "master"
   when: download_deepops_repo
 
+- name: ensure pip is installed
+  apt:
+    name:
+    - "python3-pip"
+    - "python-pip"
+    state: present
+
+- name: force up to date pip packages for downloads
+  pip:
+    name: "{{ item }}"
+    state: "latest"
+  with_items:
+  - "setuptools"
+  - "pip"
+  when: download_pip_packages
+
+- name: install ansible
+  pip:
+    name: "ansible"
+    version: "{{ ansible_version }}"
+    state: "present"
+
 - name: install Ansible Galaxy dependencies in repo
   command: ansible-galaxy install -p "{{ offline_cache_dir }}/deepops/roles/galaxy" -r "{{ offline_cache_dir }}/deepops/roles/requirements.yml"
   tags:
@@ -68,6 +90,11 @@
   get_url:
     url: "{{ nvidia_docker_wrapper_url }}"
     dest: "{{ offline_cache_dir }}/misc-files/nvidia-docker"
+ 
+- name: install docker tools
+  pip:
+    name: "docker"
+    state: "present"
 
 - name: archive docker images
   docker_image:
@@ -79,15 +106,6 @@
     state: present
   with_items: "{{ slurm_docker_image_list }}"
   when: download_docker_images
-
-- name: force up to date pip packages for downloads
-  pip:
-    name: "{{ item }}"
-    state: "latest"
-  with_items:
-  - "setuptools"
-  - "pip"
-  when: download_pip_packages
 
 - name: download python3 packages
   command: "pip3 download --dest {{ offline_cache_dir }}/pip {{ item.name }}"

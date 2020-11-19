@@ -1,4 +1,6 @@
 ---
+ansible_version: "2.9.5"
+
 apt_repos_to_mirror:
 - "deb http://archive.ubuntu.com/ubuntu bionic main restricted"
 - "deb http://archive.ubuntu.com/ubuntu bionic universe"
@@ -28,9 +30,9 @@ apt_repos_to_mirror:
 
 slurm_docker_image_list:
 - name: "dcgm-exporter" 
-  repo: "nvcr.io/"
+  repo: "docker.io/"
   image: "nvidia/dcgm-exporter"
-  version: "2.0.13-2.1.1-ubi8"
+  version: "2.0.13-2.1.1-ubuntu20.04"
 
 - name: "node-exporter"
   repo: "quay.io/"
