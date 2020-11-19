@@ -1,6 +1,7 @@
 ---
 ansible_version: "2.9.5"
 
+apt_mirror_port: 8005
 apt_repos_to_mirror:
 - "deb http://archive.ubuntu.com/ubuntu bionic main restricted"
 - "deb http://archive.ubuntu.com/ubuntu bionic universe"
@@ -27,38 +28,6 @@ apt_repos_to_mirror:
 - "deb http://repo.download.nvidia.com/baseos/ubuntu/focal/x86_64/ focal-updates common dgx"
 - "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /"
 - "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /"
-
-slurm_docker_image_list:
-- name: "dcgm-exporter" 
-  repo: "docker.io/"
-  image: "nvidia/dcgm-exporter"
-  version: "2.0.13-2.1.1-ubuntu20.04"
-
-- name: "node-exporter"
-  repo: "quay.io/"
-  image: "prometheus/node-exporter"
-  version: "v1.0.1"
-
-- name: "prometheus"
-  repo: "docker.io/"
-  image: "prom/prometheus"
-  version: "v2.22.2"
-
-- name: "grafana"
-  repo: "docker.io/"
-  image: "grafana/grafana"
-  version: "7.3.3"
-
-- name: "prometheus-slurm-exporter"
-  repo: "docker.io/"
-  image: "deepops/prometheus-slurm-exporter"
-  version: "latest"
-
-- name: "registry"
-  repo: "docker.io/"
-  image: "registry"
-  version: "2.7.1"
-
 
 slurm_version: "20.02.4"
 hwloc_version: "2.2.0"

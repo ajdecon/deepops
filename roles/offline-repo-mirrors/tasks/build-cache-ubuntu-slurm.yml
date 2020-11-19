@@ -104,7 +104,7 @@
     http_timeout: "{{ docker_http_timeout }}"
     timeout: "{{ docker_http_timeout }}"
     state: present
-  with_items: "{{ slurm_docker_image_list }}"
+  with_items: "{{ docker_image_list }}"
   when: download_docker_images
 
 - name: download python3 packages

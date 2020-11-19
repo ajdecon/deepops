@@ -106,7 +106,7 @@ local_volume_provisioner_version: "v2.3.2"
 metallb_version: "v0.8.1"
 nginx_version: "1.15"
 pause_version: "3.1"
-registry_version: "2.6"
+registry_version: "2.7.1"
 rook_version: "v1.2.4"
 
 # Configure download of docker images
@@ -207,11 +207,6 @@ docker_image_list:
   image: "nginx"
   version: "{{ nginx_version }}"
 
-- name: "dcgm-exporter"
-  repo: "nvcr.io/"
-  image: "nvidia/k8s/dcgm-exporter"
-  version: "latest"
-
 - name: "k8s-device-plugin"
   repo: ""
   image: "nvidia/k8s-device-plugin"
@@ -302,11 +297,6 @@ docker_image_list:
   image: "rook/ceph"
   version: "{{ rook_version }}"
 
-- name: "registry"
-  repo: ""
-  image: "registry"
-  version: "latest"
-
 - name: "chartmuseum"
   repo: ""
   image: "chartmuseum/chartmuseum"
@@ -336,6 +326,16 @@ docker_image_list:
   repo: "nvcr.io/"
   image: "nvidia/cuda"
   version: "10.0-devel"
+
+- name: "cuda-11.0-devel"
+  repo: "nvcr.io/"
+  image: "nvidia/cuda"
+  version: "11.0-devel"
+
+- name: "cuda-11.1-devel"
+  repo: "nvcr.io/"
+  image: "nvidia/cuda"
+  version: "11.1-devel"
 
 - name: "tensorflow"
   repo: ""
@@ -371,6 +371,38 @@ docker_image_list:
   repo: ""
   image: "deepops/pixiecore"
   version: "latest"
+
+- name: "dcgm-exporter" 
+  repo: "docker.io/"
+  image: "nvidia/dcgm-exporter"
+  version: "2.0.13-2.1.1-ubuntu20.04"
+
+- name: "node-exporter"
+  repo: "quay.io/"
+  image: "prometheus/node-exporter"
+  version: "v1.0.1"
+
+- name: "prometheus"
+  repo: "docker.io/"
+  image: "prom/prometheus"
+  version: "v2.22.2"
+
+- name: "grafana"
+  repo: "docker.io/"
+  image: "grafana/grafana"
+  version: "7.3.3"
+
+- name: "prometheus-slurm-exporter"
+  repo: "docker.io/"
+  image: "deepops/prometheus-slurm-exporter"
+  version: "latest"
+
+- name: "registry"
+  repo: "docker.io/"
+  image: "registry"
+  version: "2.7.1"
+
+
 
 # Specific images we need to reference later
 nginx_image: "{{ docker_image_list | selectattr('name', 'equalto', 'nginx') | list | first }}"
