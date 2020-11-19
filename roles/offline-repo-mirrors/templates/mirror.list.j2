@@ -1,0 +1,5 @@
+set base_path {{ offline_cache_dir }}/apt
+
+{% for m in apt_repos_to_mirror %}
+{{ m }}
+{% endfor %}

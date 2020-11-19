@@ -1,0 +1,7 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - include_role:
+        name: offline-repo-mirrors
+        tasks_from: build-cache-ubuntu-slurm
