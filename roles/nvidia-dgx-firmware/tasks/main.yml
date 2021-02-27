@@ -1,4 +1,17 @@
 ---
+# Shut down services and unload drivers
+- name: stop system services
+  systemd:
+    state: stopped
+    enabled: no
+    name: "{{ item }}"
+  with_items: "{{ nv_services }}"
+- name: unload drivers
+  modprobe:
+    state: absent
+    name: "{{ item }}"
+  with_items: "{{ nv_modules }}"
+
 # Print some debug, make directories, and initialize
 - name: Print debug
   run_once: true
