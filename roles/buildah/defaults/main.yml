@@ -1,0 +1,27 @@
+---
+# Ubuntu repository information
+buildah_deb_repo_name: "kubic_libcontainers"
+buildah_deb_repo: "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/x{{ ansible_distribution }}_{{ ansible_distribution_version }}/ /"
+buildah_deb_gpgkey: "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/x{{ ansible_distribution }}_{{ ansible_distribution_version }}/Release.key"
+buildah_deb_pkg_name: "buildah"
+
+# RedHat repository information
+buildah_rpm_repo_name: "kubic_libcontainers"
+buildah_rpm_repo_description: "openSUSE Kubic"
+buildah_rpm_repo: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_{{ ansible_distribution_major_version }}/"
+buildah_rpm_gpgkey: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_{{ ansible_distribution_major_version }}/repodata/repomd.xml.key"
+buildah_rpm_pkg_name: "buildah"
+
+# RedHat parameters to set for kernel support
+buildah_configure_kernel_options_versions: "ALL"
+buildah_configure_kernel_options: true
+buildah_max_user_namespaces: 65536
+buildah_max_mnt_namespaces: 65536
+
+# RedHat parameters needed for subuid/subgid mapping
+buildah_rpm_deps:
+- "shadow-utils"
+buildah_mapped_users:
+- name: "{{ ansible_env.SUDO_USER | default(ansible_env.USER) }}"
+  uids: "100000:65536"
+  gids: "100000:65536"

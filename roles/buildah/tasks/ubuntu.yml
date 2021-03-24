@@ -1,0 +1,17 @@
+---
+- name: install the kubic repo key
+  apt_key:
+    url: "{{ buildah_deb_gpgkey }}"
+    state: present
+
+- name: configure kubic repo
+  apt_repository:
+    repo: "{{ buildah_deb_repo }}"
+    state: present
+    filename: "{{ buildah_deb_repo_name }}"
+
+- name: install buildah
+  apt:
+    update_cache: yes
+    name: "{{ buildah_deb_pkg_name }}"
+    state: present

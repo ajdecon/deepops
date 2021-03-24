@@ -1,0 +1,8 @@
+---
+- name: Ubuntu tasks
+  when: ansible_distribution == "Ubuntu"
+  include: ubuntu.yml
+
+- name: Red Hat family tasks
+  when: ansible_os_family == "RedHat"
+  include: redhat.yml
