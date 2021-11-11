@@ -1,0 +1,66 @@
+---
+- name: prevent daemons from starting when installing packages, particularly ypbind
+  copy:
+    src: policy-rc.d
+    dest: /usr/sbin/policy-rc.d
+    owner: root
+    group: root
+    mode: 0700
+
+- name: install NIS server
+  package:
+    name: "nis"
+    state: "present"
+
+- name: set NIS default domain
+  template:
+    src: "defaultdomain"
+    dest: "/etc/defaultdomain"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: set NIS server as master
+  lineinfile:
+    path: "/etc/default/nis"
+    regexp: "^NISSERVER="
+    line: "NISSERVER=master"
+
+- name: set NIS secure nets
+  template:
+    src: "ypserv.securenets"
+    dest: "/etc/ypserv.securenets"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: configure server name
+  lineinfile:
+    path: "/etc/yp.conf"
+    regexp: "^ypserver"
+    line: "ypserver {{ nis_server }}"
+
+- name: restart rpcbind and nis
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+  - "rpcbind"
+  - "nis"
+
+- name: copy in custom ypinit
+  template:
+    src: "ypinit_deepops"
+    dest: "/usr/lib/yp/ypinit_deepops"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: intialize NIS
+  shell:
+    cmd: /usr/lib/yp/ypinit_deepops -m
+
+- name: remove file to prevent starting services at install time
+  file:
+    path: /usr/sbin/policy-rc.d
+    state: absent

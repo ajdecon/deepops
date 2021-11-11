@@ -1,0 +1,5 @@
+# Default allows access to all hosts, this should generally be adjusted
+nis_securenets: |
+        0.0.0.0    0.0.0.0
+
+nis_domain: "example.com"
