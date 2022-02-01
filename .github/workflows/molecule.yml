@@ -10,6 +10,7 @@ jobs:
       max-parallel: 4
       matrix:
         deepops-role:
+          - juju
           - singularity_wrapper
     steps:
       - name: check out repo

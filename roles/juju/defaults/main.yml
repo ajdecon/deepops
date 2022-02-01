@@ -1,0 +1,13 @@
+---
+juju_major_version: "2"
+juju_minor_version: "9"
+juju_patch_version: "0"
+juju_version: "{{ juju_major_version }}.{{ juju_minor_version }}.{{ juju_patch_version }}"
+
+juju_version_download_branch: "{{ juju_major_version }}.{{ juju_minor_version }}"
+juju_download_url: "https://launchpad.net/juju/{{ juju_version_download_branch }}/{{ juju_version }}/+download/juju-{{ juju_version }}-linux-amd64.tar.xz"
+
+juju_download_dir: "/tmp/juju/{{ juju_version }}"
+juju_download_dest: "{{ juju_download_dir }}/juju.tar.xz"
+
+juju_install_dir: "/usr/local/bin"
