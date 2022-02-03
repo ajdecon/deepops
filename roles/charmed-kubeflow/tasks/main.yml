@@ -1,0 +1,14 @@
+---
+- name: add k8s cluster to juju
+  command: "{{ charmed_kf_juju_path }} add-k8s {{ charmed_kf_k8s_name }}"
+  environment:
+    KUBECONFIG: "{{ charmed_kf_kubeconfig }}"
+
+- name: create juju controller
+  command: "{{ charmed_kf_juju_path }} bootstrap {{ chamred_kf_k8s_name }} {{ charmed_kf_controller_name }}"
+
+- name: create juju model for kubeflow
+  command: "{{ charmed_kf_juju_path }} add-model {{ charmed_kf_model_name }}"
+
+- name: deploy kubeflow bundle
+  command: "{{ charmed_kf_juju_path }} deploy {{ charmed_kf_bundle }} --trust"

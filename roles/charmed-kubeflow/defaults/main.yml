@@ -1,0 +1,8 @@
+---
+charmed_kf_kubeconfig: "/etc/kubernetes/admin.conf"
+charmed_kf_bundle: "kubeflow-lite"
+charmed_kf_juju_path: "/usr/local/bin/juju"
+
+charmed_kf_k8s_name: "deepops"
+charmed_kf_controller_name: "deepops-juju-controller"
+charmed_kf_model_name: "kubeflow"

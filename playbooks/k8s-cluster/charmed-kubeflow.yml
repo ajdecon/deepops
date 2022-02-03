@@ -1,0 +1,5 @@
+---
+- hosts: "{{ hostlist | default('kube-master[0]') }}"
+  become: yes
+  roles:
+  - charmed-kubeflow
