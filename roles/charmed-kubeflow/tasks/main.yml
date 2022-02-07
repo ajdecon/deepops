@@ -1,14 +1,49 @@
 ---
+# juju isn't very friendly when run as root, so we need a dedicated user
+- name: create install user
+  user:
+    name: "{{ charmed_kf_juju_user }}"
+    home: "{{ charmed_kf_juju_user_home }}"
+    state: present
+
+- name: copy kubeconfig in place
+  copy:
+    remote_src: true
+    src: "{{ charmed_kf_kubeconfig_src }}"
+    dest: "{{ charmed_kf_kubeconfig_dest }}"
+    owner: "{{ charmed_kf_juju_user }}"
+    mode: "0600"
+
+- name: check for k8s cluster in juju
+  shell: "{{ charmed_kf_juju_path }} list-clouds | grep {{ charmed_kf_k8s_name }}"
+  become: true
+  become_user: "{{ charmed_kf_juju_user }}"
+  register: charmed_kf_k8s_present
+
 - name: add k8s cluster to juju
-  command: "{{ charmed_kf_juju_path }} add-k8s {{ charmed_kf_k8s_name }}"
+  command: "{{ charmed_kf_juju_path }} add-k8s --client {{ charmed_kf_k8s_name }}"
+  become: true
+  become_user: "{{ charmed_kf_juju_user }}"
   environment:
-    KUBECONFIG: "{{ charmed_kf_kubeconfig }}"
+    KUBECONFIG: "{{ charmed_kf_kubeconfig_dest }}"
+  when: charmed_kf_k8s_present.rc == 1
 
 - name: create juju controller
-  command: "{{ charmed_kf_juju_path }} bootstrap {{ chamred_kf_k8s_name }} {{ charmed_kf_controller_name }}"
+  command: "{{ charmed_kf_juju_path }} bootstrap {{ charmed_kf_k8s_name }} {{ charmed_kf_controller_name }}"
+  become: true
+  become_user: "{{ charmed_kf_juju_user }}"
 
 - name: create juju model for kubeflow
   command: "{{ charmed_kf_juju_path }} add-model {{ charmed_kf_model_name }}"
+  become: true
+  become_user: "{{ charmed_kf_juju_user }}"
 
 - name: deploy kubeflow bundle
   command: "{{ charmed_kf_juju_path }} deploy {{ charmed_kf_bundle }} --trust"
+  become: true
+  become_user: "{{ charmed_kf_juju_user }}"
+  retries: 3
+  delay: 30
+  register: charmed_kf_deploy_result
+  until: charmed_kf_deploy_result.rc == 0
+
