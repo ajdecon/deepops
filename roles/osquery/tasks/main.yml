@@ -1,0 +1,6 @@
+---
+- include: install-ubuntu.yml
+  when: ansible_distribution == "Ubuntu"
+
+- include: install-redhat.yml
+  when: ansible_os_family == "RedHat"
