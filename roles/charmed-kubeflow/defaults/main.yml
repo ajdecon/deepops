@@ -1,11 +1,11 @@
 ---
 charmed_kf_juju_user: "deepops-juju"
-charmed_kf_juju_user_home: "/opt/deepops/deepops-juju"
+charmed_kf_juju_user_home: "/home/deepops-juju"
 charmed_kf_kubeconfig_src: "/etc/kubernetes/admin.conf"
 charmed_kf_kubeconfig_dest: "{{ charmed_kf_juju_user_home }}/kubeconfig"
 
 charmed_kf_bundle: "kubeflow-lite"
-charmed_kf_juju_path: "/usr/local/bin/juju"
+charmed_kf_juju_path: "/snap/bin/juju"
 
 charmed_kf_k8s_name: "deepops"
 charmed_kf_controller_name: "deepops-juju-controller"

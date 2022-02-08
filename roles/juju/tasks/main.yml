@@ -1,25 +1,6 @@
 ---
-- name: make download directory
-  file:
-    path: "{{ juju_download_dir }}"
-    state: "directory"
-
-- name: download juju binary
-  get_url:
-    url: "{{ juju_download_url }}"
-    dest: "{{ juju_download_dest }}"
-
-- name: extract juju binary
-  unarchive:
-    remote_src: true
-    src: "{{ juju_download_dest }}"
-    dest: "{{ juju_download_dir }}"
-
-- name: install juju binary
-  copy:
-    remote_src: true
-    src: "{{ juju_download_dir }}/juju"
-    dest: "{{ juju_install_dir }}/juju"
-    owner: "root"
-    group: "root"
-    mode: "0755"
+- name: install juju snap
+  snap:
+    name: juju
+    classic: true
+    state: present

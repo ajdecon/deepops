@@ -4,6 +4,7 @@
   user:
     name: "{{ charmed_kf_juju_user }}"
     home: "{{ charmed_kf_juju_user_home }}"
+    move_home: true
     state: present
 
 - name: copy kubeconfig in place
@@ -19,6 +20,7 @@
   become: true
   become_user: "{{ charmed_kf_juju_user }}"
   register: charmed_kf_k8s_present
+  failed_when: charmed_kf_k8s_present.rc == 2
 
 - name: add k8s cluster to juju
   command: "{{ charmed_kf_juju_path }} add-k8s --client {{ charmed_kf_k8s_name }}"
