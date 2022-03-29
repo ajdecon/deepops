@@ -39,13 +39,10 @@ spec:
           resources: {{- toYaml .Values.resources | nindent 12 }}
       initContainers:
         - name: {{ .Values.exampleName }}-init
-          image: docker:20.10.12-git
-          command: ['sh', '-c', 'git clone https://github.com/NVIDIA/DeepLearningExamples.git; cd $DEEP_LEARNING_EXAMPLE; docker build -t={{ .Values.registryName }}:{{ .Values.registryPort }}/{{ .Values.exampleName }} .; docker push "{{ .Values.registryName }}:{{ .Values.registryPort }}/{{ .Values.exampleName }}"']
+          image: docker.io/buildah/buildah
+          command: ['sh', '-c', 'git clone https://github.com/NVIDIA/DeepLearningExamples.git; cd $DEEP_LEARNING_EXAMPLE; buildah bud -t={{ .Values.registryName }}:{{ .Values.registryPort }}/{{ .Values.exampleName }} .; buildah push --tls-verify=false docker://"{{ .Values.registryName }}:{{ .Values.registryPort }}/{{ .Values.exampleName }}"']
           securityContext:
             privileged: true 
-          volumeMounts: 
-            - name: docker-graph-storage 
-              mountPath: /var/run/docker.sock
           env:
             - name: DOCKER_BUILDKIT
               value: "1"
@@ -134,8 +131,4 @@ spec:
       volumes:
         - name: dshm
           emptyDir: {}
-        - name: docker-graph-storage
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
  
