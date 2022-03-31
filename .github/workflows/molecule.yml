@@ -10,6 +10,7 @@ jobs:
       max-parallel: 4
       matrix:
         deepops-role:
+          - nvidia_cuda
           - cachefilesd
           - facts
           - kerberos_client
