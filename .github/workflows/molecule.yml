@@ -11,6 +11,7 @@ jobs:
       matrix:
         deepops-role:
           - nvidia_cuda
+          - nvidia_hpc_sdk
           - cachefilesd
           - facts
           - kerberos_client
