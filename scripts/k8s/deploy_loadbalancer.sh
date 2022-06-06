@@ -23,7 +23,7 @@ fi
 
 # Add Helm metallb repo if it doesn't exist
 HELM_CHARTS_REPO_METALLB="${HELM_CHARTS_REPO_METALLB:-https://charts.bitnami.com/bitnami}"
-HELM_METALLB_CHART_VERSION=${HELM_METALLB_CHART_VERSION:-0.1.24}
+HELM_METALLB_CHART_VERSION=${HELM_METALLB_CHART_VERSION:-0.12.1}
 if ! helm repo list | grep bitnami  >/dev/null 2>&1 ; then
 	helm repo add bitnami "${HELM_CHARTS_REPO_METALLB}"
 	helm repo update
