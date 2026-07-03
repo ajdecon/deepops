@@ -11,7 +11,7 @@ Instructions for deploying a GPU cluster with Kubernetes
     - [Persistent Storage](#persistent-storage)
       - [NFS Client Provisioner](#nfs-client-provisioner)
       - [Ceph Cluster (deprecated)](#ceph-cluster-deprecated)
-      - [NetApp Astra Trident](#netapp-astra-trident)
+      - [NetApp Trident](#netapp-trident)
     - [Monitoring](#monitoring)
     - [Logging](#logging)
       - [Centralized syslog](#centralized-syslog)
@@ -35,7 +35,8 @@ Instructions for deploying a GPU cluster with Kubernetes
 
 1. Install a supported operating system on all nodes.
 
-   Install a supported operating system on all servers via a 3rd-party solution (i.e. [MAAS](https://maas.io/), [Foreman](https://www.theforeman.org/)) or utilize the provided [OS install container](../pxe).
+   Install a supported operating system on all servers via a 3rd-party solution such as [MAAS](https://maas.io/) or [Foreman](https://www.theforeman.org/), or via an existing site-standard automated installer.
+   For new Ubuntu 24.04 or DGX OS 7 deployments, prefer Ubuntu autoinstall/cloud-init or MAAS and then apply DeepOps after the OS is present.
 
 2. Set up your provisioning machine.
 
@@ -84,7 +85,7 @@ Instructions for deploying a GPU cluster with Kubernetes
    # NOTE: If SSH requires a password, add: `-k`
    # NOTE: If sudo on remote machine requires a password, add: `-K`
    # NOTE: If SSH user is different than current user, add: `-u ubuntu`
-   ansible-playbook -l k8s-cluster playbooks/k8s-cluster.yml
+   ansible-playbook -l k8s_cluster playbooks/k8s-cluster.yml
    ```
 
    More information on Kubespray can be found in the official [Getting Started Guide](https://github.com/kubernetes-sigs/kubespray/blob/master/docs/getting-started.md)
@@ -123,9 +124,9 @@ Run the following script to create an administrative user and print out the dash
 
 #### NFS Client Provisioner
 
-The default behavior of DeepOps is to setup an NFS server on the first `kube-master` node. This temporary NFS server is used by the `nfs-client-provisioner` which is installed as the default StorageClass of a standard DeepOps deployment.
+The default DeepOps Kubernetes storage path is the `nfs-subdir-external-provisioner` chart, backed by an NFS export on the first `kube_control_plane` node. This is a convenience default for examples, smoke tests, and small internal clusters. It is not a highly available production storage design.
 
-To use an existing nfs server server update the `k8s_nfs_server` and `k8s_nfs_export_path` variables in `config/group_vars/k8s-cluster.yml` and set the `k8s_deploy_nfs_server` to false in `config/group_vars/k8s-cluster.yml`. Additionally, the `k8s_nfs_mkdir` variable can be set to `false` if the export directory is already configured on the server.
+To use an existing NFS server, update the `k8s_nfs_server` and `k8s_nfs_export_path` variables in `config/group_vars/k8s-cluster.yml` and set `k8s_deploy_nfs_server` to `false`. Additionally, set `k8s_nfs_mkdir` to `false` if the export directory is already configured on the server.
 
 To manually install or re-install the `nfs-client-provisioner` run:
 
@@ -133,13 +134,16 @@ To manually install or re-install the `nfs-client-provisioner` run:
 ansible-playbook playbooks/k8s-cluster/nfs-client-provisioner.yml
 ```
 
-To skip this installation set `k8s_nfs_client_provisioner` to `false`.
+To skip this installation, set `k8s_nfs_client_provisioner` to `false`.
 
 #### Ceph Cluster (deprecated)
 
-For a non-nfs based alternative, deploy a Ceph cluster running on Kubernetes for services that require persistent storage (such as Kubeflow):
+The Rook/Ceph helper is deprecated and community-supported. It predates the current Rook Helm chart layout and should not be used as a new production storage path without a site-owned Rook/Ceph design and validation plan.
+
+For legacy environments that still use this helper, deploy a Ceph cluster running on Kubernetes with:
 
 ```bash
+export DEEPOPS_ENABLE_DEPRECATED_ROOK=true
 ./scripts/k8s/deploy_rook.sh
 ```
 
@@ -149,9 +153,9 @@ Poll the Ceph status by running (this script will return when Ceph initializatio
 ./scripts/k8s/deploy_rook.sh -w
 ```
 
-#### NetApp Astra Trident
+#### NetApp Trident
 
-Deploy NetApp Astra Trident for services that require persistent storage (such as Kubeflow). Note that you must have a supported NetApp storage system/instance/service in order to use Astra Trident to provision persistent storage.
+The Trident role is optional and community-supported in DeepOps. Use it only when the site already has a supported NetApp storage system or service and a storage owner who can validate the backend, StorageClass, and snapshot policy against current NetApp documentation.
 
 1. Set configuration parameters.
 
@@ -159,16 +163,18 @@ Deploy NetApp Astra Trident for services that require persistent storage (such a
    vi config/group_vars/netapp-trident.yml
    ```
 
-2. Deploy Astra Trident using Ansible.
+   By default, the example configuration installs Trident but does not create a backend, StorageClass, or snapshot controller. Set `create_backends`, `create_StorageClasses`, or `enable_volume_snapshots` to `true` only after replacing the example backend values with site-specific storage details and auth values.
+
+2. Deploy Trident using Ansible.
 
    ```bash
    # NOTE: If SSH requires a password, add: `-k`
    # NOTE: If sudo on remote machine requires a password, add: `-K`
    # NOTE: If SSH user is different than current user, add: `-u ubuntu`
-   ansible-playbook -l k8s-cluster playbooks/k8s-cluster/netapp-trident.yml
+   ansible-playbook -l k8s_cluster playbooks/k8s-cluster/netapp-trident.yml
    ```
 
-3. Verify that Astra Trident is running.
+3. Verify that Trident is running.
 
    ```bash
    ./tridentctl -n deepops-trident version
@@ -180,11 +186,11 @@ Deploy NetApp Astra Trident for services that require persistent storage (such a
    +----------------+----------------+
    | SERVER VERSION | CLIENT VERSION |
    +----------------+----------------+
-   | 22.01.0        | 22.01.0        |
+   | 26.02.1        | 26.02.1        |
    +----------------+----------------+
    ```
 
-For more information on Astra Trident, please refer to the [official documentation](https://docs.netapp.com/us-en/trident/index.html).
+For more information on Trident, refer to the [official documentation](https://docs.netapp.com/us-en/trident/index.html).
 
 ### Monitoring
 
@@ -207,9 +213,9 @@ delete  Legacy positional argument for delete. Same as -d flag.
 
 The services can be reached from the following addresses:
 
-- Grafana: http://\<kube-master\>:30200
-- Prometheus: http://\<kube-master\>:30500
-- Alertmanager: http://\<kube-master\>:30400
+- Grafana: http://\<kube_control_plane\>:30200
+- Prometheus: http://\<kube_control_plane\>:30500
+- Alertmanager: http://\<kube_control_plane\>:30400
 
 We deploy our monitoring services using the [prometheus-operator](https://github.com/prometheus-operator/prometheus-operator) project.
 For documentation on configuring and managing the monitoring services, please see the [prometheus-operator user guides](https://github.com/prometheus-operator/prometheus-operator/tree/master/Documentation/user-guides).
@@ -234,7 +240,7 @@ Follow the [ELK logging Guide](logging.md) to setup logging in the cluster.
 
 The service can be reached from the following address:
 
-- Kibana: http://\<kube-master\>:30700
+- Kibana: http://\<kube_control_plane\>:30700
 
 ### Container Registry
 
@@ -264,7 +270,7 @@ DeepOps uses [Kubespray](https://github.com/kubernetes-sigs/kubespray) to deploy
 
 ### Adding Nodes
 
-To add K8s nodes, modify the `config/inventory` file to include the new nodes under `[all]`. Then list the nodes as relevant under the `[kube-master]`, `[etcd]`, and `[kube-node]` sections. For example, if adding a new master node, list it under kube-master and etcd. A new worker node would go under kube-node.
+To add K8s nodes, modify the `config/inventory` file to include the new nodes under `[all]`. Then list the nodes as relevant under the `[kube_control_plane]`, `[etcd]`, and `[kube_node]` sections. For example, if adding a new control-plane node, list it under `kube_control_plane` and `etcd`. A new worker node would go under `kube_node`.
 
 Then run the Kubespray `scale.yml` playbook...
 
@@ -272,7 +278,7 @@ Then run the Kubespray `scale.yml` playbook...
 # NOTE: If SSH requires a password, add: `-k`
 # NOTE: If sudo on remote machine requires a password, add: `-K`
 # NOTE: If SSH user is different than current user, add: `-u ubuntu`
-ansible-playbook -l k8s-cluster submodules/kubespray/scale.yml
+ansible-playbook -l k8s_cluster submodules/kubespray/scale.yml
 ```
 
 More information on this topic may be found in the [Kubespray docs](https://github.com/kubernetes-sigs/kubespray/blob/master/docs/getting-started.md#adding-nodes).

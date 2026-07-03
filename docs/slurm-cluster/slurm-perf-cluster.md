@@ -44,7 +44,8 @@ These packages have been installed and tested with the following Linux distribut
 
 1. Install a supported operating system on all nodes.
 
-   Install a supported operating system on all servers utilizing the [DGXie](/docs/pxe/dgxie-container.md) provisioning container, via a 3rd-party solution (i.e. [MAAS](https://maas.io/), [Foreman](https://www.theforeman.org/)), or server BMC/console.
+   Install a supported operating system on all servers via a 3rd-party solution such as [MAAS](https://maas.io/) or [Foreman](https://www.theforeman.org/), via an existing site-standard automated installer, or through server BMC/console.
+   For new Ubuntu 24.04 or DGX OS 7 deployments, prefer Ubuntu autoinstall/cloud-init or MAAS.
 
    > NOTE: During OS installation, it is ideal if the identical user/password is configured. Otherwise, follow step 4 below to create an identical user across all nodes in the cluster.
 
@@ -253,7 +254,7 @@ If errors are noticed when running `sinfo -R`, it's also helpful to search the l
 sudo journalctl -e | grep slurm
 ```
 
-To re-run the test manually, from the slurm login node...
+To re-run the test manually, from the slurm login node. Replace `registry.example.com/hpc/nccl-tests:latest` with your site's current NCCL tests image or a `.sqsh` image built by `playbooks/slurm-cluster/slurm-validation.yml`.
 
 ```bash
 # on the slurm login node
@@ -268,7 +269,7 @@ scancel <job_id>
 sudo scontrol update nodename=<node_names> state=idle
 
 # run the test again
-srun -N <num_nodes> --mpi=pmix --exclusive --container-image=deepops/nccl-tests-tf20.06-ubuntu18.04 --ntasks-per-node=8 -G <num_nodes x num_gpus_per_node> all_reduce_perf -b 1M -e 4G -f 2 -g <num_gpus_per_node>
+srun -N <num_nodes> --mpi=pmix --exclusive --container-image=registry.example.com/hpc/nccl-tests:latest --ntasks-per-node=8 -G <num_nodes x num_gpus_per_node> all_reduce_perf -b 1M -e 4G -f 2 -g <num_gpus_per_node>
 ```
 
 ### Performance validation test results are suboptimal
@@ -288,7 +289,7 @@ Try running the test from the slurm login node, but with debug output enabled...
 
 ```bash
 # from the slurm login node
-$ NCCL_DEBUG=INFO srun -N <num_nodes> --mpi=pmix --exclusive --container-image=deepops/nccl-tests-tf20.06-ubuntu18.04 --ntasks-per-node=8 -G <num_nodes x num_gpus_per_node> all_reduce_perf -b 1M -e 4G -f 2 -g <num_gpus_per_node>
+$ NCCL_DEBUG=INFO srun -N <num_nodes> --mpi=pmix --exclusive --container-image=registry.example.com/hpc/nccl-tests:latest --ntasks-per-node=8 -G <num_nodes x num_gpus_per_node> all_reduce_perf -b 1M -e 4G -f 2 -g <num_gpus_per_node>
 
 # examine the output, looking for any mention of `GDRDMA`
 # for example: `NET/IB/0/GDRDMA`

@@ -28,7 +28,7 @@ The DeepOps project encapsulates best practices in the deployment of GPU server 
 - An existing cluster that needs a resource manager / batch scheduler, where DeepOps is used to install Slurm or Kubernetes
 - A single machine where no scheduler is desired, only NVIDIA drivers, Docker, and the NVIDIA Container Runtime
 
-Latest release: [DeepOps 23.08 Release](https://github.com/NVIDIA/deepops/releases/tag/23.08)
+Latest release: [DeepOps 26.05 Release](https://github.com/NVIDIA/deepops/releases/tag/26.05)
 
 It is recommended to use the latest release branch for stable code (linked above). All development takes place on the master branch, which is generally [functional](docs/deepops/testing.md) but may change significantly between releases.
 
@@ -36,21 +36,26 @@ It is recommended to use the latest release branch for stable code (linked above
 
 ### Provisioning System
 
-The provisioning system is used to orchestrate the running of all playbooks and one will be needed when instantiating Kubernetes or Slurm clusters. Supported operating systems which are tested and supported include:
+The provisioning system is used to orchestrate the running of all playbooks and one will be needed when instantiating Kubernetes or Slurm clusters. Current release validation focuses on:
 
-- NVIDIA DGX OS 4, 5
-- Ubuntu 18.04 LTS, 20.04, 22.04 LTS
-- CentOS 7, 8
+- Ubuntu 22.04 LTS and 24.04 LTS
+- NVIDIA DGX OS 6 and 7
+
+DeepOps still retains legacy/community-maintained paths for older environments such as DGX OS 4/5, Ubuntu 18.04/20.04, and CentOS 7/8. Treat those paths as compatibility references unless your site validates them for the release you deploy.
 
 ### Cluster System
 
-The cluster nodes will follow the requirements described by Slurm or Kubernetes. You may also use a cluster node as a provisioning system but it is not required.
+The cluster nodes will follow the requirements described by Slurm or Kubernetes. You may also use a cluster node as a provisioning system but it is not required. Current release validation focuses on:
 
-- NVIDIA DGX OS 4, 5
-- Ubuntu 18.04 LTS, 20.04, 22.04 LTS
-- CentOS 7, 8
+- Ubuntu 22.04 LTS and 24.04 LTS for generic Kubernetes and Slurm deployments
+- NVIDIA DGX OS 6 and 7 for DGX systems
+- Red Hat Enterprise Linux / Rocky Linux 8 and 9 for DGX platform software installation through the `nvidia-dgx` role
 
-You may also install a supported operating system on all servers via a 3rd-party solution (i.e. [MAAS](https://maas.io/), [Foreman](https://www.theforeman.org/)) or utilize the provided [OS install container](docs/pxe/minimal-pxe-container.md).
+DeepOps still retains legacy/community-maintained paths for older environments such as DGX OS 4/5, Ubuntu 18.04/20.04, CentOS 7/8, and the historical DGX EL7 stack. Treat those paths as compatibility references unless your site validates them for the release you deploy.
+
+You may also install a supported operating system on all servers via a 3rd-party solution such as [MAAS](https://maas.io/) or [Foreman](https://www.theforeman.org/), or via an existing site-standard automated installer.
+For new Ubuntu 24.04 or DGX OS 7 deployments, prefer Ubuntu autoinstall/cloud-init or MAAS and then apply DeepOps roles after the OS is present.
+For DGX platform software installation on top of vanilla Ubuntu or Red Hat family operating systems, see the [DGX software stack role guide](docs/deepops/dgx-software-stack.md).
 
 ### Kubernetes
 
@@ -77,11 +82,11 @@ For more information on Slurm in general, refer to the [official Slurm docs](htt
 [NVIDIA Bright Cluster Manager](https://www.brightcomputing.com/brightclustermanager) is recommended as an enterprise solution which enables managing multiple workload managers within a single cluster, including Kubernetes, Slurm, Univa Grid Engine, and PBS Pro.
 
 **DeepOps does not test or support a configuration where nodes have a heterogenous OS running.**
-Additional modifications are needed if you plan to use unsupported operating systems such as RHEL.
+The `nvidia-dgx` role can install NVIDIA DGX platform software on supported DGX systems running Red Hat Enterprise Linux / Rocky Linux 8 or 9; broader Kubernetes or Slurm cluster support on RHEL still requires site-specific validation.
 
 ### Virtual
 
-To try DeepOps before deploying it on an actual cluster, a virtualized version of DeepOps may be deployed on a single node using Vagrant. This can be used for testing, adding new features, or configuring DeepOps to meet deployment-specific needs.
+To try DeepOps before deploying it on an actual cluster, a virtualized version of DeepOps may be deployed on a single node using Vagrant. This path is useful for learning and local experimentation, but it is a legacy/community-supported lab path and should not be treated as release-grade validation for current GPU clusters.
 
 Consult the [Virtual DeepOps Deployment Guide](virtual/README.md) to build a GPU-enabled virtual cluster with DeepOps.
 
